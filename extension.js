@@ -1,30 +1,49 @@
-(function (Scratch) {
+(function(Scratch) {
   'use strict';
+
   class DiscordWebhook {
     getInfo() {
       return {
-        id: 'discordwebhook',
+        id: 'discordWebhook',
         name: 'Discord Webhook',
         blocks: [
           {
             opcode: 'sendWebhook',
             blockType: Scratch.BlockType.COMMAND,
-            text: 'send [TEXT] to webhook [URL]',
+            text: 'send [MESSAGE] to webhook [URL]',
             arguments: {
-              TEXT: { type: Scratch.ArgumentType.STRING, defaultValue: 'Hello from Scratch!' },
-              URL: { type: Scratch.ArgumentType.STRING, defaultValue: 'YOUR_WEBHOOK_URL' }
+              MESSAGE: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'poopoo test'
+              },
+              URL: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'https://discord.com/api/webhooks/...'
+              }
             }
           }
         ]
       };
     }
+
     sendWebhook(args) {
-      fetch(args.URL, {
+      const message = args.MESSAGE;
+      const url = args.URL;
+
+      // This part handles all the formatting for you
+      return fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: args.TEXT })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: message
+        })
+      }).catch(err => {
+        console.error('Webhook failed:', err);
       });
     }
   }
+
   Scratch.extensions.register(new DiscordWebhook());
 })(Scratch);
